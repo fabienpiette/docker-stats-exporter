@@ -1,0 +1,6 @@
+bin/
+coverage.out
+*.exe
+.env
+*.test
+__debug_bin*
