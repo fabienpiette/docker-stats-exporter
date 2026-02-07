@@ -13,6 +13,9 @@ permissions:
   contents: write
   packages: write
 
+env:
+  GOFLAGS: "-mod=vendor"
+
 jobs:
   build:
     runs-on: ubuntu-latest
