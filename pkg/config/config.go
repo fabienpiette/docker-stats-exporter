@@ -20,12 +20,12 @@ type Config struct {
 }
 
 type ServerConfig struct {
-	Port        string    `mapstructure:"port"`
-	Address     string    `mapstructure:"address"`
-	MetricsPath string    `mapstructure:"metrics_path"`
-	HealthPath  string    `mapstructure:"health_path"`
-	ReadyPath   string    `mapstructure:"ready_path"`
-	TLS         TLSConfig `mapstructure:"tls"`
+	Port        string     `mapstructure:"port"`
+	Address     string     `mapstructure:"address"`
+	MetricsPath string     `mapstructure:"metrics_path"`
+	HealthPath  string     `mapstructure:"health_path"`
+	ReadyPath   string     `mapstructure:"ready_path"`
+	TLS         TLSConfig  `mapstructure:"tls"`
 	Auth        AuthConfig `mapstructure:"auth"`
 }
 
@@ -146,17 +146,17 @@ func bindEnvVars(v *viper.Viper) {
 
 	// Explicit bindings for commonly used env vars
 	bindings := map[string]string{
-		"server.port":              "EXPORTER_PORT",
-		"server.address":           "EXPORTER_ADDRESS",
-		"server.metrics_path":      "EXPORTER_METRICS_PATH",
-		"docker.host":              "DOCKER_HOST",
-		"docker.api_version":       "DOCKER_API_VERSION",
-		"collection.interval":      "COLLECTION_INTERVAL",
-		"collection.timeout":       "COLLECTION_TIMEOUT",
-		"logging.level":            "LOG_LEVEL",
-		"logging.format":           "LOG_FORMAT",
+		"server.port":                "EXPORTER_PORT",
+		"server.address":             "EXPORTER_ADDRESS",
+		"server.metrics_path":        "EXPORTER_METRICS_PATH",
+		"docker.host":                "DOCKER_HOST",
+		"docker.api_version":         "DOCKER_API_VERSION",
+		"collection.interval":        "COLLECTION_INTERVAL",
+		"collection.timeout":         "COLLECTION_TIMEOUT",
+		"logging.level":              "LOG_LEVEL",
+		"logging.format":             "LOG_FORMAT",
 		"performance.max_concurrent": "MAX_CONCURRENT",
-		"performance.workers":      "WORKERS",
+		"performance.workers":        "WORKERS",
 	}
 	for key, env := range bindings {
 		_ = v.BindEnv(key, env)

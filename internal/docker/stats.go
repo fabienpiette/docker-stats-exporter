@@ -20,12 +20,12 @@ type Stats struct {
 	MemoryFailcnt    uint64
 
 	// CPU (raw nanosecond counters)
-	CPUUsageTotal    uint64
-	CPUUsageSystem   uint64
-	CPUUsageUser     uint64
+	CPUUsageTotal       uint64
+	CPUUsageSystem      uint64
+	CPUUsageUser        uint64
 	CPUThrottledPeriods uint64
 	CPUThrottledTime    uint64
-	OnlineCPUs       uint32
+	OnlineCPUs          uint32
 
 	// Network per interface
 	Networks map[string]NetworkStats
