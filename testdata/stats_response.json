@@ -1,0 +1,104 @@
+{
+  "read": "2024-01-15T10:30:00.000000000Z",
+  "preread": "2024-01-15T10:29:59.000000000Z",
+  "pids_stats": {
+    "current": 25,
+    "limit": 4096
+  },
+  "blkio_stats": {
+    "io_service_bytes_recursive": [
+      {"major": 8, "minor": 0, "op": "Read", "value": 1048576},
+      {"major": 8, "minor": 0, "op": "Write", "value": 2097152},
+      {"major": 8, "minor": 0, "op": "Sync", "value": 0},
+      {"major": 8, "minor": 0, "op": "Async", "value": 0},
+      {"major": 8, "minor": 0, "op": "Total", "value": 3145728}
+    ],
+    "io_serviced_recursive": [
+      {"major": 8, "minor": 0, "op": "Read", "value": 100},
+      {"major": 8, "minor": 0, "op": "Write", "value": 200},
+      {"major": 8, "minor": 0, "op": "Sync", "value": 0},
+      {"major": 8, "minor": 0, "op": "Async", "value": 0},
+      {"major": 8, "minor": 0, "op": "Total", "value": 300}
+    ]
+  },
+  "num_procs": 0,
+  "storage_stats": {},
+  "cpu_stats": {
+    "cpu_usage": {
+      "total_usage": 500000000000,
+      "usage_in_kernelmode": 100000000000,
+      "usage_in_usermode": 400000000000,
+      "percpu_usage": [250000000000, 250000000000]
+    },
+    "system_cpu_usage": 10000000000000,
+    "online_cpus": 2,
+    "throttling_data": {
+      "periods": 50,
+      "throttled_periods": 10,
+      "throttled_time": 5000000000
+    }
+  },
+  "precpu_stats": {
+    "cpu_usage": {
+      "total_usage": 490000000000,
+      "usage_in_kernelmode": 98000000000,
+      "usage_in_usermode": 392000000000,
+      "percpu_usage": [245000000000, 245000000000]
+    },
+    "system_cpu_usage": 9900000000000,
+    "online_cpus": 2,
+    "throttling_data": {
+      "periods": 48,
+      "throttled_periods": 9,
+      "throttled_time": 4500000000
+    }
+  },
+  "memory_stats": {
+    "usage": 104857600,
+    "max_usage": 209715200,
+    "limit": 536870912,
+    "failcnt": 3,
+    "stats": {
+      "active_anon": 52428800,
+      "active_file": 10485760,
+      "cache": 20971520,
+      "hierarchical_memory_limit": 536870912,
+      "inactive_anon": 5242880,
+      "inactive_file": 5242880,
+      "mapped_file": 4194304,
+      "pgfault": 1000,
+      "pgmajfault": 5,
+      "pgpgin": 500,
+      "pgpgout": 400,
+      "rss": 73400320,
+      "rss_huge": 0,
+      "total_active_anon": 52428800,
+      "total_active_file": 10485760,
+      "total_cache": 20971520,
+      "total_inactive_anon": 5242880,
+      "total_inactive_file": 5242880,
+      "total_mapped_file": 4194304,
+      "total_pgfault": 1000,
+      "total_pgmajfault": 5,
+      "total_pgpgin": 500,
+      "total_pgpgout": 400,
+      "total_rss": 73400320,
+      "total_rss_huge": 0,
+      "total_unevictable": 0,
+      "unevictable": 0,
+      "swap": 1048576
+    }
+  },
+  "networks": {
+    "eth0": {
+      "rx_bytes": 1073741824,
+      "rx_packets": 500000,
+      "rx_errors": 10,
+      "rx_dropped": 5,
+      "tx_bytes": 536870912,
+      "tx_packets": 250000,
+      "tx_errors": 2,
+      "tx_dropped": 1
+    }
+  }
+}
