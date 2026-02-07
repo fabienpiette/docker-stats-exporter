@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  GOFLAGS: "-mod=vendor"
+  GOFLAGS: "-mod=mod"
 
 jobs:
   test:
@@ -18,7 +18,7 @@ jobs:
         with:
           go-version-file: go.mod
       - name: Check formatting
-        run: test -z "$(gofmt -l $(find . -name '*.go' -not -path './vendor/*'))"
+        run: test -z "$(gofmt -l .)"
       - name: Vet
         run: go vet ./...
       - name: Run tests

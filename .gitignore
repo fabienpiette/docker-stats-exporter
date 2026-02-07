@@ -5,3 +5,4 @@ coverage.out
 *.test
 __debug_bin*
 tmp/
+CLAUDE.md
