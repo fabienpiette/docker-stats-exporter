@@ -242,4 +242,4 @@ An optional in-memory cache with configurable TTL avoids redundant Docker API ca
 
 ## License
 
-MIT
+AGPL-3.0
