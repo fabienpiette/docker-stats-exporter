@@ -109,10 +109,7 @@ func (c *Client) GetContainerStats(ctx context.Context, id string) (*Stats, erro
 	}
 
 	// We also need inspect data for full parsing
-	inspectCtx, inspectCancel := context.WithTimeout(ctx, c.timeout)
-	defer inspectCancel()
-
-	inspect, err := c.cli.ContainerInspect(inspectCtx, id)
+	inspect, err := c.cli.ContainerInspect(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("inspecting container %s: %w", id, err)
 	}

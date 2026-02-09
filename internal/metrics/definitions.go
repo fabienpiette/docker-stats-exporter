@@ -7,7 +7,7 @@ var (
 	containerLabelNames = []string{"container_name", "compose_service", "compose_project", "image"}
 	networkLabelNames   = append(containerLabelNames, "interface")
 	blockIOLabelNames   = append(containerLabelNames, "device")
-	infoLabelNames      = append(containerLabelNames, "container_id", "status", "health_status", "created")
+	infoLabelNames      = append(containerLabelNames, "container_id", "status", "health_status", "started_at")
 )
 
 // --- Memory metrics ---

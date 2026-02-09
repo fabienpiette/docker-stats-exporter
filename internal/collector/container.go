@@ -202,7 +202,11 @@ func (c *ContainerCollector) emitStateMetrics(ch chan<- prometheus.Metric, ctr *
 	}
 
 	// container_info: extra labels for informational purposes
-	infoLV := append(lv, ctr.ID[:12], ctr.Status, ctr.Health, ctr.StartedAt.Format(time.RFC3339))
+	shortID := ctr.ID
+	if len(shortID) > 12 {
+		shortID = shortID[:12]
+	}
+	infoLV := append(lv, shortID, ctr.Status, ctr.Health, ctr.StartedAt.Format(time.RFC3339))
 	metrics.SendSafe(ch, metrics.SafeNewConstMetric(metrics.ContainerInfo, prometheus.GaugeValue, 1, infoLV...))
 
 	metrics.SendSafe(ch, metrics.SafeNewConstMetric(metrics.ContainerHealthStatus, prometheus.GaugeValue, metrics.HealthStatusToFloat(ctr.Health), lv...))
