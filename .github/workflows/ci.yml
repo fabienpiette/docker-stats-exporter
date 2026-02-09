@@ -17,6 +17,8 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
+      - name: Download dependencies
+        run: go mod download
       - name: Check formatting
         run: test -z "$(gofmt -l .)"
       - name: Vet
