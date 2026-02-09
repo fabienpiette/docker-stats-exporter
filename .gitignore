@@ -4,3 +4,5 @@ coverage.out
 .env
 *.test
 __debug_bin*
+tmp/
+CLAUDE.md

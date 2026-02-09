@@ -1,0 +1,66 @@
+# Docker Stats Exporter Configuration
+
+server:
+  port: "9200"
+  address: "0.0.0.0"
+  metrics_path: "/metrics"
+  health_path: "/health"
+  ready_path: "/ready"
+
+  # TLS configuration (optional)
+  tls:
+    enabled: false
+    cert_file: ""
+    key_file: ""
+
+  # Basic auth (optional)
+  auth:
+    enabled: false
+    username: ""
+    password: ""
+
+docker:
+  host: "unix:///var/run/docker.sock"
+  api_version: ""  # leave empty for auto-negotiation
+
+  tls:
+    enabled: false
+    ca_cert: ""
+    cert: ""
+    key: ""
+    verify: true
+
+collection:
+  interval: 0       # 0 = collect on each Prometheus scrape
+  timeout: 10s
+
+  collectors:
+    container: true
+    system: true
+
+  filters:
+    include:
+      labels: []     # e.g., ["monitoring=true"]
+      names: []      # e.g., ["^web-.*"]
+      images: []     # e.g., ["nginx:.*"]
+    exclude:
+      labels: []
+      names: []
+      images: []
+
+metrics:
+  namespace: ""
+  global_labels: {}
+  cache:
+    enabled: true
+    ttl: 30s
+
+logging:
+  level: "info"      # debug, info, warn, error
+  format: "json"     # json, text
+  output: "stdout"
+
+performance:
+  max_concurrent: 10
+  workers: 4
+  pprof_enabled: false
