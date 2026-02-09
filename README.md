@@ -151,6 +151,12 @@ Per-device metrics (extra label: `device`):
 | `container_fs_reads_total` | counter | Read operations |
 | `container_fs_writes_total` | counter | Write operations |
 
+### Process
+
+| Metric | Type | Description |
+|---|---|---|
+| `container_pids_current` | gauge | Number of PIDs in the container |
+
 ### Container state
 
 These are emitted for all containers, including stopped ones:
@@ -160,7 +166,7 @@ These are emitted for all containers, including stopped ones:
 | `container_last_seen` | gauge | Unix timestamp of last observation |
 | `container_start_time_seconds` | gauge | Start time as Unix timestamp |
 | `container_uptime_seconds` | gauge | Uptime in seconds |
-| `container_info` | gauge | Always 1; carries extra labels (container_id, status, health_status, created) |
+| `container_info` | gauge | Always 1; carries extra labels (container_id, status, health_status, started_at) |
 | `container_health_status` | gauge | 0=none, 1=starting, 2=healthy, 3=unhealthy |
 | `container_restart_count` | gauge | Restart count |
 | `container_exit_code` | gauge | Last exit code |
@@ -218,7 +224,7 @@ services:
 
 ### Full monitoring stack
 
-The included `docker-compose.yml` sets up the exporter with a socket proxy, Prometheus, and Grafana. The Prometheus scrape config is in `prometheus.yml`.
+The included `docker-compose.yml` sets up the exporter with a socket proxy, Prometheus, and Grafana. A Grafana dashboard is auto-provisioned at startup. The Prometheus scrape config is in `prometheus.yml`.
 
 ```bash
 docker compose up -d
@@ -226,7 +232,15 @@ docker compose up -d
 
 - Exporter: http://localhost:9200/metrics
 - Prometheus: http://localhost:9090
-- Grafana: http://localhost:3000 (admin/admin)
+- Grafana: http://localhost:3000 (admin/admin) — dashboard loads automatically
+
+### Kubernetes
+
+A DaemonSet manifest is provided in `deploy/kubernetes/daemonset.yml`. It runs one exporter pod per node with the Docker socket mounted read-only, includes Prometheus scrape annotations, and sets resource limits (50m CPU, 64Mi memory).
+
+```bash
+kubectl apply -f deploy/kubernetes/daemonset.yml
+```
 
 ### Remote Docker host
 
