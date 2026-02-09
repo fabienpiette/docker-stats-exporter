@@ -1,6 +1,6 @@
 module github.com/fabienpiette/docker-stats-exporter
 
-go 1.25.3
+go 1.24.0
 
 require (
 	github.com/docker/docker v27.4.1+incompatible
