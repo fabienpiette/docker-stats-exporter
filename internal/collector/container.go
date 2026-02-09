@@ -47,8 +47,6 @@ func (c *ContainerCollector) Describe(ch chan<- *prometheus.Desc) {
 	for _, d := range metrics.AllContainerDescs() {
 		ch <- d
 	}
-	ch <- metrics.ExporterScrapeDuration
-	ch <- metrics.ExporterScrapeErrors
 }
 
 // Collect fetches container stats and emits Prometheus metrics.
