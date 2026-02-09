@@ -120,7 +120,7 @@ func setDefaults(v *viper.Viper) {
 
 	// Collection
 	v.SetDefault("collection.interval", 0)
-	v.SetDefault("collection.timeout", "10s")
+	v.SetDefault("collection.timeout", "30s")
 	v.SetDefault("collection.collectors.container", true)
 	v.SetDefault("collection.collectors.system", true)
 

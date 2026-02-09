@@ -27,9 +27,9 @@ var (
 )
 
 func init() {
-	// Set a sensible log format before config is loaded so early log
-	// messages (e.g. config errors) are readable.
-	log.SetFormatter(&log.TextFormatter{FullTimestamp: true, TimestampFormat: time.RFC3339})
+	// Use JSON formatter before config loads — matches the default config
+	// format so there's no format mismatch in the log stream.
+	log.SetFormatter(&log.JSONFormatter{TimestampFormat: time.RFC3339})
 	log.SetLevel(log.InfoLevel)
 }
 
@@ -142,7 +142,7 @@ func initLogger(cfg config.LoggingConfig) {
 	case "json":
 		log.SetFormatter(&log.JSONFormatter{TimestampFormat: time.RFC3339})
 	default:
-		log.SetFormatter(&log.TextFormatter{FullTimestamp: true, TimestampFormat: time.RFC3339})
+		log.SetFormatter(&log.TextFormatter{FullTimestamp: true, TimestampFormat: time.RFC3339, DisableColors: true})
 	}
 
 	// Set output
