@@ -33,8 +33,11 @@ type Stats struct {
 	// Block I/O per device
 	BlockIO map[string]BlockIOStats
 
+	// PIDs
+	PIDsCurrent uint64
+
 	// Container state
-	ContainerID  string
+	ContainerID string
 	Name         string
 	Image        string
 	Labels       map[string]string
@@ -137,6 +140,9 @@ func ParseDockerStats(statsJSON *types.StatsJSON, containerJSON *types.Container
 			TxDropped: net.TxDropped,
 		}
 	}
+
+	// PIDs
+	s.PIDsCurrent = statsJSON.PidsStats.Current
 
 	// Block I/O
 	s.BlockIO = parseBlockIOStats(&statsJSON.BlkioStats)

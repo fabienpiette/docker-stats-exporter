@@ -150,6 +150,16 @@ var (
 	)
 )
 
+// --- Process metrics ---
+
+var (
+	PIDsCurrent = prometheus.NewDesc(
+		"container_pids_current",
+		"Number of PIDs in the container.",
+		containerLabelNames, nil,
+	)
+)
+
 // --- Container state metrics ---
 
 var (
@@ -248,6 +258,7 @@ func AllContainerDescs() []*prometheus.Desc {
 		NetworkRxBytes, NetworkTxBytes, NetworkRxPackets, NetworkTxPackets,
 		NetworkRxErrors, NetworkTxErrors, NetworkRxDropped, NetworkTxDropped,
 		FSReadBytes, FSWriteBytes, FSReadOps, FSWriteOps,
+		PIDsCurrent,
 		ContainerLastSeen, ContainerStartTime, ContainerUptime, ContainerInfo,
 		ContainerHealthStatus, ContainerRestartCount, ContainerExitCode,
 	}

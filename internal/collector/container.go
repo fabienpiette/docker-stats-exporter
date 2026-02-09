@@ -13,9 +13,15 @@ import (
 	"github.com/fabienpiette/docker-stats-exporter/pkg/config"
 )
 
+// DockerClient defines the Docker API methods needed by the container collector.
+type DockerClient interface {
+	ListContainers(ctx context.Context) ([]docker.Container, error)
+	GetContainerStats(ctx context.Context, id string) (*docker.Stats, error)
+}
+
 // ContainerCollector implements prometheus.Collector for container metrics.
 type ContainerCollector struct {
-	client        *docker.Client
+	client        DockerClient
 	filter        *docker.Filter
 	cache         *StatsCache
 	timeout       time.Duration
@@ -26,7 +32,7 @@ type ContainerCollector struct {
 }
 
 // NewContainerCollector creates a new container metrics collector.
-func NewContainerCollector(client *docker.Client, filter *docker.Filter, cache *StatsCache, cfg *config.Config) *ContainerCollector {
+func NewContainerCollector(client DockerClient, filter *docker.Filter, cache *StatsCache, cfg *config.Config) *ContainerCollector {
 	return &ContainerCollector{
 		client:        client,
 		filter:        filter,
@@ -131,6 +137,7 @@ func (c *ContainerCollector) Collect(ch chan<- prometheus.Metric) {
 			c.emitCPUMetrics(ch, r.stats, lv)
 			c.emitNetworkMetrics(ch, r.stats, lv)
 			c.emitBlockIOMetrics(ch, r.stats, lv)
+			c.emitPIDsMetrics(ch, r.stats, lv)
 		}
 	}
 
@@ -180,6 +187,10 @@ func (c *ContainerCollector) emitBlockIOMetrics(ch chan<- prometheus.Metric, s *
 		metrics.SendSafe(ch, metrics.SafeNewConstMetric(metrics.FSReadOps, prometheus.CounterValue, float64(bio.ReadOps), dlv...))
 		metrics.SendSafe(ch, metrics.SafeNewConstMetric(metrics.FSWriteOps, prometheus.CounterValue, float64(bio.WriteOps), dlv...))
 	}
+}
+
+func (c *ContainerCollector) emitPIDsMetrics(ch chan<- prometheus.Metric, s *docker.Stats, lv []string) {
+	metrics.SendSafe(ch, metrics.SafeNewConstMetric(metrics.PIDsCurrent, prometheus.GaugeValue, float64(s.PIDsCurrent), lv...))
 }
 
 func (c *ContainerCollector) emitStateMetrics(ch chan<- prometheus.Metric, ctr *docker.Container, lv []string, now time.Time) {

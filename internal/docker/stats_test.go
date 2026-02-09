@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func loadTestStatsJSON(t *testing.T) *types.StatsJSON {
+func loadTestStatsJSON(t testing.TB) *types.StatsJSON {
 	t.Helper()
 	data, err := os.ReadFile("../../testdata/stats_response.json")
 	require.NoError(t, err)
@@ -91,6 +91,9 @@ func TestParseDockerStats(t *testing.T) {
 	assert.Equal(t, uint64(2), eth0.TxErrors)
 	assert.Equal(t, uint64(5), eth0.RxDropped)
 	assert.Equal(t, uint64(1), eth0.TxDropped)
+
+	// PIDs
+	assert.Equal(t, uint64(25), stats.PIDsCurrent)
 
 	// Block I/O
 	require.Contains(t, stats.BlockIO, "8:0")
