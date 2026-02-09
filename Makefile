@@ -1,4 +1,4 @@
-.PHONY: build test docker clean run lint
+.PHONY: build test vet docker clean run lint
 
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 COMMIT  ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
@@ -12,6 +12,9 @@ LDFLAGS := -s -w \
 
 build:
 	CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o bin/$(BINARY) ./cmd/exporter
+
+vet:
+	go vet ./...
 
 test:
 	go test -v -race -coverprofile=coverage.out ./...
