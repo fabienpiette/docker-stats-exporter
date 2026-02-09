@@ -26,6 +26,13 @@ var (
 	buildDate = "unknown"
 )
 
+func init() {
+	// Set a sensible log format before config is loaded so early log
+	// messages (e.g. config errors) are readable.
+	log.SetFormatter(&log.TextFormatter{FullTimestamp: true, TimestampFormat: time.RFC3339})
+	log.SetLevel(log.InfoLevel)
+}
+
 func main() {
 	// CLI flags
 	configFile := pflag.String("config", "", "Path to config file")
