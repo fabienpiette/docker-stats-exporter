@@ -151,11 +151,11 @@ func TestCollect_StoppedContainer(t *testing.T) {
 	mock := &mockDockerClient{
 		containers: []docker.Container{
 			{
-				ID:    "stopped1aabbccddeeff",
-				Name:  "old-app",
-				Image: "redis:7",
-				State: "exited",
-				Labels: map[string]string{},
+				ID:       "stopped1aabbccddeeff",
+				Name:     "old-app",
+				Image:    "redis:7",
+				State:    "exited",
+				Labels:   map[string]string{},
 				ExitCode: 137,
 			},
 		},

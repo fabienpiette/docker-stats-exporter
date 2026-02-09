@@ -37,7 +37,7 @@ type Stats struct {
 	PIDsCurrent uint64
 
 	// Container state
-	ContainerID string
+	ContainerID  string
 	Name         string
 	Image        string
 	Labels       map[string]string
