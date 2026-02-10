@@ -288,6 +288,25 @@ service docker restart
 
 This issue affects any Docker-in-LXC setup using Alpine or other OpenRC-based distributions. Systemd-based distributions handle this delegation automatically.
 
+## Why not cAdvisor?
+
+cAdvisor is a full host monitoring tool. If you only need Docker container metrics, this exporter is a lighter alternative.
+
+| | Docker Stats Exporter | cAdvisor |
+|---|---|---|
+| Binary size | ~12 MB | ~200 MB+ |
+| Runtime overhead | Low (API calls on scrape only) | High (continuous monitoring of host and containers) |
+| Host mounts | Docker socket only | `/sys/fs/cgroup`, `/proc`, `/sys`, `/dev/disk`, Docker socket |
+| Privileged mode | Not required | Required or multiple host mounts |
+| Socket proxy | Works behind a restricted socket proxy | Needs direct access to host filesystems |
+| Stale series | None (custom collector rebuilds metrics each scrape) | Can leave stale series for removed containers |
+| Compose labels | Built-in `compose_service` and `compose_project` on every metric | Not extracted natively |
+| Scope | Docker container metrics only | Host CPU, memory, disks, hardware topology, per-process stats |
+| Container runtimes | Docker only | Docker, containerd, CRI-O |
+| Kubernetes | Works via DaemonSet | Built into kubelet |
+
+Use this exporter when you run Docker on a single host or a small cluster and want container metrics without the weight of full host monitoring. Use cAdvisor when you need host-level observability, per-process stats, or run Kubernetes with multiple container runtimes.
+
 ## Design notes
 
 The exporter uses a custom Prometheus collector (not pre-registered metric vectors). Metrics are built fresh on each scrape, which means containers that disappear are automatically cleaned up without stale time series.
