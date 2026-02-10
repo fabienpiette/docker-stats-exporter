@@ -6,6 +6,7 @@ import (
 
 	"github.com/docker/docker/api/types"
 	containertypes "github.com/docker/docker/api/types/container"
+	log "github.com/sirupsen/logrus"
 )
 
 // Stats holds parsed container statistics.
@@ -155,9 +156,18 @@ func parseMemoryStats(s *Stats, mem *containertypes.MemoryStats) {
 	s.MemoryLimit = mem.Limit
 	s.MemoryFailcnt = mem.Failcnt
 
+	log.WithFields(log.Fields{
+		"usage": mem.Usage,
+		"limit": mem.Limit,
+		"stats": mem.Stats,
+	}).Debug("Raw memory stats from Docker API")
+
 	// These fields live in the Stats map and differ between cgroup v1 and v2.
 	// Docker SDK normalizes most of this, but cache/rss/swap need extraction.
 	if v, ok := mem.Stats["cache"]; ok {
+		s.MemoryCache = v
+	} else if v, ok := mem.Stats["file"]; ok {
+		// cgroup v2 uses "file" instead of "cache"
 		s.MemoryCache = v
 	}
 	if v, ok := mem.Stats["rss"]; ok {
