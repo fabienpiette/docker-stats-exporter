@@ -60,7 +60,7 @@ Settings can also be overridden with environment variables:
 | `LOG_LEVEL` | `info` | Log level (debug, info, warn, error) |
 | `LOG_FORMAT` | `json` | Log format (json, text) |
 | `MAX_CONCURRENT` | `10` | Max parallel stats requests |
-| `COLLECTION_TIMEOUT` | `10s` | Docker API call timeout |
+| `COLLECTION_TIMEOUT` | `30s` | Docker API call timeout |
 
 ### Filtering containers
 
@@ -245,6 +245,48 @@ kubectl apply -f deploy/kubernetes/daemonset.yml
 ### Remote Docker host
 
 Point `DOCKER_HOST` to a remote TCP address. Enable TLS in the config if the remote daemon requires it.
+
+## Troubleshooting
+
+### All memory metrics are 0 (Proxmox LXC)
+
+When running Docker inside a Proxmox LXC container, memory metrics may report as 0 for all containers. This happens because Alpine (OpenRC) does not delegate cgroup v2 controllers to child cgroups by default. Docker can run containers but cannot read their memory stats.
+
+Verify by checking inside the LXC container:
+
+```bash
+cat /sys/fs/cgroup/cgroup.subtree_control
+```
+
+If the output is empty or missing `memory`, the fix is to create an init script that moves processes to a child cgroup and enables the controllers:
+
+```bash
+cat > /etc/local.d/cgroup-delegate.start << 'SCRIPT'
+#!/bin/sh
+mkdir -p /sys/fs/cgroup/init
+for pid in $(cat /sys/fs/cgroup/cgroup.procs 2>/dev/null); do
+    echo "$pid" > /sys/fs/cgroup/init/cgroup.procs 2>/dev/null
+done
+echo "+memory +cpu +io +pids" > /sys/fs/cgroup/cgroup.subtree_control 2>/dev/null
+SCRIPT
+
+chmod +x /etc/local.d/cgroup-delegate.start
+rc-update add local default
+```
+
+Then stop and start the LXC container from the Proxmox host (a reboot inside the container is not sufficient):
+
+```bash
+pct stop <CTID> && pct start <CTID>
+```
+
+After the container comes back up, restart Docker so it recreates container cgroups with memory accounting:
+
+```bash
+service docker restart
+```
+
+This issue affects any Docker-in-LXC setup using Alpine or other OpenRC-based distributions. Systemd-based distributions handle this delegation automatically.
 
 ## Design notes
 
