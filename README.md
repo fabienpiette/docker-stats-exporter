@@ -2,9 +2,17 @@
 
 A lightweight Prometheus exporter for Docker container metrics. It collects memory, CPU, network, disk I/O, and container state metrics directly from the Docker API, without the overhead of cAdvisor.
 
-The binary is around 12 MB and the Docker image stays under 20 MB. It works with both cgroup v1 and v2.
+---
 
-## Quick start
+<p align="center">
+  <img src="docs/demo.gif" alt="goscribe demo" width="800">
+</p>
+
+<p align="center">
+<a href="https://buymeacoffee.com/fabienpiette" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="60"></a>
+</p>
+
+## Quick Start
 
 The simplest way to run it is with the Docker socket mounted directly:
 
@@ -25,20 +33,49 @@ make build
 ./bin/docker-stats-exporter
 ```
 
-Metrics are available at `http://localhost:9200/metrics`.
+Metrics are available at `http://localhost:9200/metrics`:
 
-## Building
-
-Requires Go 1.21 or later.
-
-```bash
-make build       # build the binary to bin/
-make test        # run tests with race detector
-make docker      # build the Docker image
-make clean       # remove build artifacts
-make run         # go run directly
-make lint        # run golangci-lint
 ```
+# HELP container_memory_usage_bytes Current memory usage in bytes
+# TYPE container_memory_usage_bytes gauge
+container_memory_usage_bytes{container_name="nginx",compose_service="web",compose_project="myapp",image="nginx:latest"} 2.7262976e+07
+
+# HELP container_cpu_usage_seconds_total Total CPU time consumed in seconds
+# TYPE container_cpu_usage_seconds_total counter
+container_cpu_usage_seconds_total{container_name="nginx",compose_service="web",compose_project="myapp",image="nginx:latest"} 15.230744
+
+# HELP container_network_receive_bytes_total Network bytes received
+# TYPE container_network_receive_bytes_total counter
+container_network_receive_bytes_total{container_name="nginx",compose_service="web",compose_project="myapp",image="nginx:latest",interface="eth0"} 1.048576e+06
+```
+
+## Features
+
+- **~12 MB binary, <20 MB Docker image** — runs comfortably on a Raspberry Pi or a small VPS
+- **Zero stale series** — custom Prometheus collector rebuilds metrics each scrape; removed containers disappear automatically
+- **cgroup v1 and v2** — handles both transparently, including Proxmox LXC environments
+- **Compose-aware labels** — every metric carries `compose_service` and `compose_project` out of the box
+- **Works behind a socket proxy** — only needs container and info API access, no host mounts
+- **Zero-config defaults** — connects to the local Docker socket on port 9200; customize with env vars, CLI flags, or YAML
+
+## Why not cAdvisor?
+
+cAdvisor is a full host monitoring tool. If you only need Docker container metrics, this exporter is a lighter alternative.
+
+| | Docker Stats Exporter | cAdvisor |
+|---|---|---|
+| Binary size | ~12 MB | ~200 MB+ |
+| Runtime overhead | Low (API calls on scrape only) | High (continuous monitoring of host and containers) |
+| Host mounts | Docker socket only | `/sys/fs/cgroup`, `/proc`, `/sys`, `/dev/disk`, Docker socket |
+| Privileged mode | Not required | Required or multiple host mounts |
+| Socket proxy | Works behind a restricted socket proxy | Needs direct access to host filesystems |
+| Stale series | None (custom collector rebuilds metrics each scrape) | Can leave stale series for removed containers |
+| Compose labels | Built-in `compose_service` and `compose_project` on every metric | Not extracted natively |
+| Scope | Docker container metrics only | Host CPU, memory, disks, hardware topology, per-process stats |
+| Container runtimes | Docker only | Docker, containerd, CRI-O |
+| Kubernetes | Works via DaemonSet | Built into kubelet |
+
+Use this exporter when you run Docker on a single host or a small cluster and want container metrics without the weight of full host monitoring. Use cAdvisor when you need host-level observability, per-process stats, or run Kubernetes with multiple container runtimes.
 
 ## Configuration
 
@@ -64,7 +101,7 @@ Settings can also be overridden with environment variables:
 
 ### Filtering containers
 
-You can include or exclude containers by name, image, or label. Patterns for names and images are regular expressions. Exclude rules always take precedence over include rules.
+Include or exclude containers by name, image, or label. Patterns for names and images are regular expressions. Exclude rules always take precedence over include rules.
 
 ```yaml
 collection:
@@ -184,7 +221,7 @@ These are emitted for all containers, including stopped ones:
 | `exporter_scrape_duration_seconds` | gauge | Scrape time per collector |
 | `exporter_scrape_errors_total` | counter | Error count per collector |
 
-## HTTP endpoints
+## HTTP Endpoints
 
 | Path | Description |
 |---|---|
@@ -288,28 +325,22 @@ service docker restart
 
 This issue affects any Docker-in-LXC setup using Alpine or other OpenRC-based distributions. Systemd-based distributions handle this delegation automatically.
 
-## Why not cAdvisor?
+## Development
 
-cAdvisor is a full host monitoring tool. If you only need Docker container metrics, this exporter is a lighter alternative.
+Requires Go 1.24 or later.
 
-| | Docker Stats Exporter | cAdvisor |
-|---|---|---|
-| Binary size | ~12 MB | ~200 MB+ |
-| Runtime overhead | Low (API calls on scrape only) | High (continuous monitoring of host and containers) |
-| Host mounts | Docker socket only | `/sys/fs/cgroup`, `/proc`, `/sys`, `/dev/disk`, Docker socket |
-| Privileged mode | Not required | Required or multiple host mounts |
-| Socket proxy | Works behind a restricted socket proxy | Needs direct access to host filesystems |
-| Stale series | None (custom collector rebuilds metrics each scrape) | Can leave stale series for removed containers |
-| Compose labels | Built-in `compose_service` and `compose_project` on every metric | Not extracted natively |
-| Scope | Docker container metrics only | Host CPU, memory, disks, hardware topology, per-process stats |
-| Container runtimes | Docker only | Docker, containerd, CRI-O |
-| Kubernetes | Works via DaemonSet | Built into kubelet |
+```bash
+make build       # build the binary to bin/
+make test        # run tests with race detector
+make lint        # run golangci-lint
+make docker      # build the Docker image
+make run         # go run directly
+make clean       # remove build artifacts
+```
 
-Use this exporter when you run Docker on a single host or a small cluster and want container metrics without the weight of full host monitoring. Use cAdvisor when you need host-level observability, per-process stats, or run Kubernetes with multiple container runtimes.
+## Design Notes
 
-## Design notes
-
-The exporter uses a custom Prometheus collector (not pre-registered metric vectors). Metrics are built fresh on each scrape, which means containers that disappear are automatically cleaned up without stale time series.
+The exporter uses a custom Prometheus collector (not pre-registered metric vectors). Metrics are built fresh on each scrape, so containers that disappear are automatically cleaned up without stale time series.
 
 Stats are fetched with `stream=false` on the Docker API, giving a single point-in-time snapshot per container per scrape. A bounded worker pool limits concurrent Docker API calls (configurable via `max_concurrent`).
 
