@@ -8,10 +8,6 @@ A lightweight Prometheus exporter for Docker container metrics. It collects memo
   <img src="docs/demo.gif" alt="goscribe demo" width="800">
 </p>
 
-<p align="center">
-<a href="https://buymeacoffee.com/fabienpiette" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="60"></a>
-</p>
-
 ## Quick Start
 
 The simplest way to run it is with the Docker socket mounted directly:
