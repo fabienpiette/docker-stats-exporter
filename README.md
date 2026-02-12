@@ -346,6 +346,14 @@ Stats are fetched with `stream=false` on the Docker API, giving a single point-i
 
 An optional in-memory cache with configurable TTL avoids redundant Docker API calls when Prometheus scrapes faster than the cache window.
 
+## Acknowledgments
+
+Thanks to all [contributors](https://github.com/fabienpiette/docker-stats-exporter/graphs/contributors).
+
+<p align="center">
+<a href="https://buymeacoffee.com/fabienpiette" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="60"></a>
+</p>
+
 ## License
 
-AGPL-3.0
+[AGPL-3.0](LICENSE)
